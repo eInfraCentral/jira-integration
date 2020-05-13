@@ -25,13 +25,13 @@ public class ProviderListener {
 
     private final RestTemplate restTemplate;
 
-    @Value("${host.url}")
+    @Value("${jira.host.url}")
     private String jiraHost;
 
-    @Value("${project.key}")
+    @Value("${jira.project.key}")
     private String projectKey;
 
-    @Value("${assignee.email}")
+    @Value("${jira.assignee.email}")
     private String assigneeEmail;
 
     @Autowired

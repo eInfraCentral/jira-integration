@@ -24,10 +24,10 @@ public class Config {
 
     private static final Logger logger = LogManager.getLogger(Config.class);
 
-    @Value("${user.email}")
+    @Value("${jira.user.email}")
     private String jiraUser;
 
-    @Value("${user.token}")
+    @Value("${jira.user.token}")
     private String jiraToken;
 
     @Value("${jms.host}")
