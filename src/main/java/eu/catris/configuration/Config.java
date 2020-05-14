@@ -24,10 +24,10 @@ public class Config {
 
     private static final Logger logger = LogManager.getLogger(Config.class);
 
-    @Value("${jira.user.email}")
+    @Value("${jira.user.email:}")
     private String jiraUser;
 
-    @Value("${jira.user.token}")
+    @Value("${jira.user.token:}")
     private String jiraToken;
 
     @Value("${jms.host}")
@@ -39,7 +39,9 @@ public class Config {
     @Bean
     RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(jiraUser, jiraToken));
+        if (!jiraUser.equals("") && !jiraToken.equals("")) {
+            restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(jiraUser, jiraToken));
+        }
         return restTemplate;
     }
 
