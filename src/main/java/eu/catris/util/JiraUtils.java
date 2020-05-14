@@ -2,6 +2,9 @@ package eu.catris.util;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class JiraUtils {
 
     public static final String ONBOARDING_ISSUE_JSON_TEMPLATE =
@@ -16,20 +19,31 @@ public class JiraUtils {
             "            \"key\": \"%s\"\n" +
             "        },\n" +
             "        \"components\": [\n" +
-            "                {\n" +
-            "                    \"name\": \"Service Provider\"\n" +
-            "                }\n" +
+            "                    %s\n" +
             "            ],\n" +
             "        \"assignee\": {\n" +
-            "            \"emailAddress\": \"%s\"\n" +
+            "            \"accountId\": \"%s\"\n" +
             "        }\n" +
             "    }\n" +
             "}";
 
+    public static final String ISSUE_COMPONENTS_TEMPLATE =
+            "    {\n" +
+            "        \"name\": \"%s\"\n" +
+            "    }\n";
 
-    public static JSONObject createProviderOnboardingIssue(String providerName, String providerDesc, String projectKey, String assigneeEmail) {
-        String issue = String.format(JiraUtils.ONBOARDING_ISSUE_JSON_TEMPLATE, providerName, providerDesc, projectKey, assigneeEmail);
+
+    public static JSONObject createProviderOnboardingIssue(String providerName, String providerDesc, String projectKey, List<String> componentNames, String assigneeId) {
+        String issue = String.format(JiraUtils.ONBOARDING_ISSUE_JSON_TEMPLATE, providerName, providerDesc, projectKey, createComponents(componentNames), assigneeId);
         return new JSONObject(issue);
+    }
+
+    public static String createComponents(List<String> names) {
+        List<String> components = new ArrayList<>();
+        for (String name : names) {
+            components.add(String.format(ISSUE_COMPONENTS_TEMPLATE, name));
+        }
+        return String.join(",", components);
     }
 
     private JiraUtils() {

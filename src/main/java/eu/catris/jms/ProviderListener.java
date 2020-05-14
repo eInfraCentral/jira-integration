@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class ProviderListener {
@@ -31,8 +32,11 @@ public class ProviderListener {
     @Value("${jira.project.key}")
     private String projectKey;
 
-    @Value("${jira.assignee.email}")
-    private String assigneeEmail;
+    @Value("${jira.assignee.id}")
+    private String assigneeId;
+
+    @Value("#{'${jira.components.names}'.split(',')}")
+    private List<String> componentsNames;
 
     @Autowired
     public ProviderListener(RestTemplate restTemplate) {
@@ -42,8 +46,9 @@ public class ProviderListener {
 
     @JmsListener(destination = "provider.create")
     public void getNewProvider(ProviderBundle provider) {
+        logger.debug("New provider: {}", provider);
         JSONObject json = JiraUtils.createProviderOnboardingIssue(provider.getProvider().getName(),
-                provider.getProvider().getDescription(), projectKey, assigneeEmail);
+                provider.getProvider().getDescription(), projectKey, componentsNames, assigneeId);
         HttpEntity<String> entity = new HttpEntity<>(json.toString(), createJsonHeaders());
         String issue = null;
 
@@ -57,21 +62,15 @@ public class ProviderListener {
 
     @JmsListener(destination = "provider.update")
     public void getUpdatedProvider(ProviderBundle provider) {
-        logger.info("this is the updated provider: {}", provider);
+        logger.debug("Updated provider: {}", provider);
     }
 
     @JmsListener(destination = "provider.delete")
     public void getDeletedProvider(ProviderBundle provider) {
-        logger.info("this is the deleted provider: {}", provider);
+        logger.debug("Deleted provider: {}", provider);
     }
 
-    @JmsListener(destination = "registry.>")
-    public void updatedResource(Object sth) {
-        logger.info("Received message: {}", sth);
-    }
-
-
-    private HttpHeaders createJsonHeaders(){
+    private HttpHeaders createJsonHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
