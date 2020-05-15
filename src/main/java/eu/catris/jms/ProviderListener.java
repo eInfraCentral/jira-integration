@@ -30,6 +30,9 @@ public class ProviderListener {
     @Value("#{'${jira.components.names:}'.split(',')}")
     private List<String> componentsNames;
 
+    @Value("#{'${jira.labels:}'.split(',')}")
+    private List<String> labels;
+
     @Autowired
     public ProviderListener(SimpleJiraService jiraService) {
         this.jiraService = jiraService;
@@ -40,7 +43,7 @@ public class ProviderListener {
     public void getNewProvider(ProviderBundle provider) {
         logger.debug("New provider: {}", provider);
         JSONObject json = JiraUtils.createProviderOnboardingIssue(provider.getProvider().getName(),
-                provider.getProvider().getDescription(), projectKey, componentsNames, assigneeId);
+                provider.getProvider().getDescription(), projectKey, componentsNames, labels, assigneeId);
         jiraService.createIssue(json);
     }
 

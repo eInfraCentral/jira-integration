@@ -21,6 +21,9 @@ public class JiraUtils {
             "        \"components\": [\n" +
             "                    %s\n" +
             "            ],\n" +
+            "        \"labels\": [\n" +
+            "                    %s\n" +
+            "            ],\n" +
             "        \"assignee\": {\n" +
             "            \"accountId\": \"%s\"\n" +
             "        }\n" +
@@ -33,8 +36,11 @@ public class JiraUtils {
             "    }\n";
 
 
-    public static JSONObject createProviderOnboardingIssue(String providerName, String providerDesc, String projectKey, List<String> componentNames, String assigneeId) {
-        String issue = String.format(JiraUtils.ONBOARDING_ISSUE_JSON_TEMPLATE, providerName, providerDesc, projectKey, createComponents(componentNames), assigneeId);
+    public static JSONObject createProviderOnboardingIssue(String providerName, String providerDesc,
+                                                           String projectKey, List<String> componentNames,
+                                                           List<String> labels, String assigneeId) {
+        String issue = String.format(JiraUtils.ONBOARDING_ISSUE_JSON_TEMPLATE, providerName, providerDesc, projectKey,
+                createComponents(componentNames), createLabels(labels), assigneeId);
         return new JSONObject(issue);
     }
 
@@ -44,6 +50,14 @@ public class JiraUtils {
             components.add(String.format(ISSUE_COMPONENTS_TEMPLATE, name));
         }
         return String.join(",", components);
+    }
+
+    public static String createLabels(List<String> labels) {
+        List<String> entries = new ArrayList<>();
+        for (String label : labels) {
+            entries.add(String.format("\"%s\"", label));
+        }
+        return String.join(",", entries);
     }
 
     private JiraUtils() {
