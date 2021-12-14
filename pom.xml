@@ -21,7 +21,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>5.2.4.RELEASE</spring.version>
-        <logging.version>2.12.1</logging.version>
+        <logging.version>2.16.0</logging.version>
     </properties>
 
     <dependencies>
